@@ -50,7 +50,7 @@ namespace ShoppingService.Core.Cart
             }
         }
 
-        public EitherAsync<ServiceError, CartItem> GetItemById(string id) =>
+        public EitherAsync<ServiceError, CartItem> GetItemById(Guid id) =>
             match(_repository.GetById(id),
                 Right: option => match(option,
                     Some: item => Right<ServiceError, CartItem>(item),
@@ -78,12 +78,12 @@ namespace ShoppingService.Core.Cart
             }
         }
 
-        public EitherAsync<ServiceError, string> RemoveItemFromCart(string id) =>
+        public EitherAsync<ServiceError, Guid> RemoveItemFromCart(Guid id) =>
             match(_repository.Remove(id),
                 Right: option => match(option,
-                    Some: item => Right<ServiceError, string>(item.Id),
-                    None: () => Right<ServiceError, string>(id)),
-                Left: ex => Left<ServiceError, string>(new ServiceError(ex.Message, ServiceErrorCode.UnknownException))
+                    Some: item => Right<ServiceError, Guid>(item.Id),
+                    None: () => Right<ServiceError, Guid>(id)),
+                Left: ex => Left<ServiceError, Guid>(new ServiceError(ex.Message, ServiceErrorCode.UnknownException))
             ).ToAsync();
 
         private string ConvertValidationErrorsToCSVFormattedString(IEnumerable<ValidationFailure> errors) {

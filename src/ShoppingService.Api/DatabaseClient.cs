@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using ShoppingService.Api.Cart;
+using ShoppingService.Core.Cart;
 using ShoppingService.Core.Common;
 using LanguageExt;
 using static LanguageExt.Prelude;

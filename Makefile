@@ -13,7 +13,7 @@ build:
 	dotnet $@
 
 start:
-	docker-compose up
+	dotnet run --project src/ShoppingService.Api
 
 build_artifact:
 	dotnet publish -c Release -o dist
@@ -35,14 +35,3 @@ ship_it: build test deploy
 
 create_db_init_script:
 	./scripts/$@.sh
-
-run_local_db: create_db_init_script
-	docker-compose run --service-ports $(DB_NAME)-db
-	docker-compose down
-
-debug_local_db:
-	docker-compose run \
-	$(DB_NAME)-db psql \
-	-h $(DB_HOST) \
-	-U $(DB_USER) \
-	$(DB_NAME)
