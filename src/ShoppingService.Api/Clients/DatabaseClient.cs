@@ -7,16 +7,16 @@ using static LanguageExt.Prelude;
 
 namespace ShoppingService.Api {
     public class DatabaseClient<T>: IDatabaseClient<T> {
-        private readonly ApplicationContext _applicationContext;
+        private readonly PostgresqlContext _context;
 
-        public DatabaseClient(ApplicationContext applicationContext) {
-            this._applicationContext = applicationContext ?? throw new ArgumentNullException(nameof(applicationContext));
+        public DatabaseClient(PostgresqlContext applicationContext) {
+            this._context = applicationContext ?? throw new ArgumentNullException(nameof(applicationContext));
         }
 
         public TryOptionAsync<T> AddItem(T item) =>
             TryOptionAsync(async () =>
             {
-                await _applicationContext.FindAsync(item);
+                await _context.FindAsync(item);
                 return Some(item);
             });
         

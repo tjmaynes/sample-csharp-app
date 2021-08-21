@@ -44,7 +44,7 @@ namespace ShoppingService.Core.Tests.Unit
         [Fact]
         public async Task GetItemsFromCart_WhenCalled_ShouldEventually_ReturnAllItems() {
             var items = new List<CartItem>();
-            items.Add(new CartItem(Guid.NewGuid().ToString(), "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow));
+            items.Add(new CartItem(Guid.NewGuid(), "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow));
             var expected = new PagedResult<CartItem>(items, 1, 1, 1);
             var response = Some(expected);
 
@@ -94,7 +94,7 @@ namespace ShoppingService.Core.Tests.Unit
 
         [Fact]
         public async Task AddItemToCart_WhenCalled_WithValidItem_ShouldEventually_ReturnAllItems() {
-            var newItem = new CartItem(Guid.NewGuid().ToString(), "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
+            var newItem = new CartItem(Guid.NewGuid(), "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
             var expected = Some(newItem);
 
             var repositoryMock = new Mock<IRepository<CartItem>>();
@@ -115,7 +115,7 @@ namespace ShoppingService.Core.Tests.Unit
 
         [Fact]
         public async Task AddItemToCart_WhenCalled_WithInvalidItem_ShouldEventually_ReturnServiceError() {
-            var invalidItem = new CartItem(Guid.NewGuid().ToString(), "some-name-1", -1m, "some-manufacturer", DateTime.UtcNow);
+            var invalidItem = new CartItem(Guid.NewGuid(), "some-name-1", -1m, "some-manufacturer", DateTime.UtcNow);
             var expected = new ServiceError("'Price' must be greater than '0'.", ServiceErrorCode.InvalidItem);
 
             var repositoryMock = new Mock<IRepository<CartItem>>();
@@ -131,12 +131,12 @@ namespace ShoppingService.Core.Tests.Unit
     
         [Fact]
         public async Task GetItemById_WhenCalled_WithValidItem_ShouldEventually_ReturnASpecificItem() {
-            var expectedId = Guid.NewGuid().ToString();
+            var expectedId = Guid.NewGuid();
             var item = new CartItem(expectedId, "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
             var expected = Some(item);
 
             var repositoryMock = new Mock<IRepository<CartItem>>();
-            repositoryMock.Setup(mock => mock.GetById(It.IsAny<string>()))
+            repositoryMock.Setup(mock => mock.GetById(It.IsAny<Guid>()))
                 .Returns(expected);
             var sut = _fixture.Initialize(repositoryMock.Object);
 
@@ -146,19 +146,19 @@ namespace ShoppingService.Core.Tests.Unit
             );
 
             repositoryMock.Verify(
-                mock => mock.GetById(It.Is<string>(id => id == expectedId)),
+                mock => mock.GetById(It.Is<Guid>(id => id == expectedId)),
                 Times.Once()
             );
         }
 
         [Fact]
         public async Task GetItemById_WhenCalled_AndNoItemFound_ShouldEventually_ReturnServiceError() {
-            var expectedId = Guid.NewGuid().ToString();
+            var expectedId = Guid.NewGuid();
             var expected = new ServiceError("Item not found!", ServiceErrorCode.ItemNotFound);
             var response = RightAsync<Exception, Option<CartItem>>(None);
 
             var repositoryMock = new Mock<IRepository<CartItem>>();
-            repositoryMock.Setup(mock => mock.GetById(It.IsAny<string>()))
+            repositoryMock.Setup(mock => mock.GetById(It.IsAny<Guid>()))
                 .Returns(response);
             var sut = _fixture.Initialize(repositoryMock.Object);
 
@@ -168,14 +168,14 @@ namespace ShoppingService.Core.Tests.Unit
             );
 
             repositoryMock.Verify(
-                mock => mock.GetById(It.Is<string>(id => id == expectedId)),
+                mock => mock.GetById(It.Is<Guid>(id => id == expectedId)),
                 Times.Once()
             );
         }
 
         [Fact]
         public async Task UpdateItemInCart_WhenCalled_WithValidItem_ShouldEventually_ReturnUpdatedItem() {
-            var updatedItem = new CartItem(Guid.NewGuid().ToString(), "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
+            var updatedItem = new CartItem(Guid.NewGuid(), "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
             var expected = Some(updatedItem);
 
             var repositoryMock = new Mock<IRepository<CartItem>>();
@@ -196,7 +196,7 @@ namespace ShoppingService.Core.Tests.Unit
 
         [Fact]
         public async Task UpdateItemInCart_WhenCalled_WithInvalidItem_ShouldEventually_ReturnServiceError() {
-            var invalidItem = new CartItem(Guid.NewGuid().ToString(), "some-name-1", -1m, "some-manufacturer", DateTime.UtcNow);
+            var invalidItem = new CartItem(Guid.NewGuid(), "some-name-1", -1m, "some-manufacturer", DateTime.UtcNow);
             var expected = new ServiceError("'Price' must be greater than '0'.", ServiceErrorCode.InvalidItem);
 
             var repositoryMock = new Mock<IRepository<CartItem>>();
@@ -212,12 +212,12 @@ namespace ShoppingService.Core.Tests.Unit
 
         [Fact]
         public async Task RemoveItemInCart_WhenCalled_WithValidItem_ShouldEventually_ReturnUpdatedItem() {
-            var expected = Guid.NewGuid().ToString();
+            var expected = Guid.NewGuid();
             var item = new CartItem(expected, "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
             var response = Some(item);
 
             var repositoryMock = new Mock<IRepository<CartItem>>();
-            repositoryMock.Setup(mock => mock.Remove(It.IsAny<string>()))
+            repositoryMock.Setup(mock => mock.Remove(It.IsAny<Guid>()))
                 .Returns(response);
             var sut = _fixture.Initialize(repositoryMock.Object);
 
@@ -227,7 +227,7 @@ namespace ShoppingService.Core.Tests.Unit
             );
 
             repositoryMock.Verify(
-                mock => mock.Remove(It.Is<string>(id => id == expected)),
+                mock => mock.Remove(It.Is<Guid>(id => id == expected)),
                 Times.Once()
             );
         }
@@ -239,18 +239,18 @@ namespace ShoppingService.Core.Tests.Unit
             var expected = new ServiceError(exceptionMessage, ServiceErrorCode.UnknownException);
 
             var repositoryMock = new Mock<IRepository<CartItem>>();
-            repositoryMock.Setup(mock => mock.Remove(It.IsAny<string>()))
+            repositoryMock.Setup(mock => mock.Remove(It.IsAny<Guid>()))
                 .Returns(exception);
             var sut = _fixture.Initialize(repositoryMock.Object);
 
-            var removedId = Guid.NewGuid().ToString();
+            var removedId = Guid.NewGuid();
             await match(sut.RemoveItemFromCart(removedId),
                 Right: _  => Assert.False(true, "Should't get here!"),
                 Left: ex => Assert.Equal(expected, ex)
             );
 
             repositoryMock.Verify(
-                mock => mock.Remove(It.Is<string>(id => id == removedId)),
+                mock => mock.Remove(It.Is<Guid>(id => id == removedId)),
                 Times.Once()
             );
         }
