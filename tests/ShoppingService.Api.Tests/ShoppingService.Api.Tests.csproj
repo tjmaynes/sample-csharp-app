@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ShoppingService.Infrastructure\ShoppingService.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\ShoppingService.Api\ShoppingService.Api.csproj" />
     <ProjectReference Include="..\..\src\ShoppingService.Core\ShoppingService.Core.csproj" />
   </ItemGroup>
