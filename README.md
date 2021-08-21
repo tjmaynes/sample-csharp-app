@@ -1,6 +1,6 @@
-# Sample C\# Project
+# Test-driven ASP.NET Core
 
-> Building and deploying a shopping cart api using C#/ASP.NET and Kubernetes.
+> Building and deploying a shopping cart api using ASP.NET Core and Kubernetes.
 
 ## Requirements
 
